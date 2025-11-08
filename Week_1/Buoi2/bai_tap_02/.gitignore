@@ -1,0 +1,40 @@
+# ===== OS rác =====
+.DS_Store
+Thumbs.db
+
+# ===== IDE =====
+# Eclipse / STS
+.project
+.classpath
+.settings/
+# VS Code (nếu có)
+.vscode/
+# IntelliJ (nếu mở bằng IDEA)
+.idea/
+*.iml
+*.iws
+
+# ===== Maven build =====
+target/
+!.mvn/wrapper/maven-wrapper.jar  # (giữ wrapper)
+# Nếu đóng gói WAR trong target, cũng ignore luôn
+*.war
+
+# ===== Logs / tạm =====
+logs/
+*.log
+*.tmp
+*.swp
+*.swo
+
+# ===== Annotation processors (nếu phát sinh) =====
+.apt_generated/
+.apt_generated_test/
+
+# ===== Sonar / Checkstyle (nếu dùng) =====
+.sonar/
+.checkstyle/
+
+# ===== Others (tuỳ môi trường) =====
+bin/
+out/

@@ -1,0 +1,3 @@
+Cài đặt IDE spring tools
+Cài thêm các công cụ như JDK, maven, tomcat
+Chạy thử server
