@@ -44,20 +44,6 @@ public class DBMySqlConnection {
 				System.out.print("Connecting OK");
 			}
 
-			// crate statement
-			Statement stmt = conn.createStatement();
-			// insert ‘GiaoVien'
-			stmt.executeUpdate("INSERT INTO student(name, age, grade) "
-			+ "VALUES ('Nam', 20, 'D'), ('Tai', 19, 'B')");
-			// get data from table ‘GiaoVien'
-			ResultSet rs = stmt.executeQuery("SELECT * FROM student");
-			// show data
-			while (rs.next()) {
-			System.out.println(rs.getInt("id") + " " + rs.getString(2)
-			+ " " + rs.getString(3));
-			}
-			conn.close(); // close connection
-
 		} catch (Exception ex){
 			ex.printStackTrace();
 		}
