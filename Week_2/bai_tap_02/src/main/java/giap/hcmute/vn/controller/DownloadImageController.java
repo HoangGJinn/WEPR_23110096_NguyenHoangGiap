@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
+import giap.hcmute.vn.constant.Constant;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -25,12 +26,9 @@ public class DownloadImageController extends HttpServlet {
             return;
         }
         
-        // Resolve upload directory from servlet context instead of using Constant.DIR
-        String uploadsDir = getServletContext().getRealPath("/uploads");
-        if (uploadsDir == null) {
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Upload directory not available");
-            return;
-        }
+        // Đường dẫn đến D:/uploads
+        String uploadsDir = Constant.UPLOAD_PATH + "uploads";
+        
         File file = new File(uploadsDir, fileName);
         
         // Kiểm tra file tồn tại và là file (không phải folder)

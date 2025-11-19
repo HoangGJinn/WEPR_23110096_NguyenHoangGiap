@@ -7,6 +7,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
+import giap.hcmute.vn.constant.Constant;
+import giap.hcmute.vn.model.Category;
+import giap.hcmute.vn.service.CategoryService;
+import giap.hcmute.vn.service.impl.CategoryServiceImpl;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -26,7 +30,6 @@ import giap.hcmute.vn.service.impl.CategoryServiceImpl;
     maxRequestSize = 1024 * 1024 * 50     // 50MB
 )
 public class CategoryEditController extends HttpServlet{
-    private static final String UPLOAD_DIR = "uploads";
     CategoryService cateService = new CategoryServiceImpl();
 
     @Override
@@ -83,9 +86,8 @@ public class CategoryEditController extends HttpServlet{
                 // Tên file = timestamp + extension
                 String uniqueFileName = System.currentTimeMillis() + ext;
                 
-                // Đường dẫn lưu file vào subfolder "category"
-                String uploadPath = getServletContext().getRealPath("") + File.separator + 
-                                   UPLOAD_DIR + File.separator + "category";
+                // Đường dẫn lưu file vào D:/uploads/category
+                String uploadPath = Constant.UPLOAD_PATH + "uploads" + File.separator + "category";
                 File uploadDir = new File(uploadPath);
                 if (!uploadDir.exists()) {
                     uploadDir.mkdirs();

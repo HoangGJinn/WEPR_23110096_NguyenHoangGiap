@@ -81,9 +81,6 @@ build/
 ehthumbs.db
 Thumbs.db
 
-# Uploads folder - user generated content
-src/main/webapp/uploads/
-uploads/
 
 # Database properties (if contains sensitive info)
 # src/main/resources/db.properties
