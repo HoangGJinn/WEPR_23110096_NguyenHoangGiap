@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title th:text="${category.id != null && category.id > 0 ? 'Sửa Category' : 'Thêm Category mới'}">Thêm Category</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>
+                <i class="bi bi-tag-plus" th:if="${category.id == null || category.id == 0}"></i>
+                <i class="bi bi-tag-fill" th:if="${category.id != null && category.id > 0}"></i>
+                <span th:text="${category.id != null && category.id > 0 ? 'Sửa Category' : 'Thêm Category mới'}"></span>
+            </h2>
+            <a th:href="@{/admin/categories}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Quay lại
+            </a>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <form th:action="${category.id != null && category.id > 0 ? '/admin/categories/edit/' + category.id : '/admin/categories/create'}" 
+                      th:object="${category}" method="post">
+                    <input type="hidden" th:field="*{id}" th:if="${category.id != null && category.id > 0}"/>
+                    
+                    <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger" role="alert">
+                        <ul class="mb-0">
+                            <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Category Name <span class="text-danger">*</span></label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   th:field="*{categoryName}"
+                                   th:classappend="${#fields.hasErrors('categoryName')} ? 'is-invalid'"
+                                   required>
+                            <div th:if="${#fields.hasErrors('categoryName')}" class="invalid-feedback">
+                                <span th:errors="*{categoryName}"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Category Code <span class="text-danger">*</span></label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   th:field="*{categoryCode}"
+                                   th:classappend="${#fields.hasErrors('categoryCode')} ? 'is-invalid'"
+                                   required>
+                            <div th:if="${#fields.hasErrors('categoryCode')}" class="invalid-feedback">
+                                <span th:errors="*{categoryCode}"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Images URL</label>
+                            <input type="text" class="form-control" th:field="*{images}" placeholder="URL hình ảnh">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">User</label>
+                            <select class="form-select" name="userId">
+                                <option value="">-- Chọn User --</option>
+                                <option th:each="user : ${users}" 
+                                        th:value="${user.id}" 
+                                        th:text="${user.username}"
+                                        th:selected="${category.user != null && category.user.id == user.id}">
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" th:field="*{status}">
+                                <option value="">-- Chọn --</option>
+                                <option value="true">Active</option>
+                                <option value="false">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> Lưu
+                        </button>
+                        <a th:href="@{/admin/categories}" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Hủy
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

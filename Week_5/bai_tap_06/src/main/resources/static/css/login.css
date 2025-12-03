@@ -1,0 +1,100 @@
+body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-container {
+    max-width: 450px;
+    width: 100%;
+}
+
+.login-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    overflow: hidden;
+}
+
+.login-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem;
+    text-align: center;
+}
+
+.login-header h2 {
+    margin: 0;
+    font-weight: 600;
+}
+
+.login-body {
+    padding: 2rem;
+}
+
+.credentials-box {
+    background: #f8f9fa;
+    border: 2px dashed #667eea;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.credentials-box h5 {
+    color: #667eea;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.credential-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    padding: 0.5rem;
+    background: white;
+    border-radius: 5px;
+}
+
+.credential-item:last-child {
+    margin-bottom: 0;
+}
+
+.credential-item i {
+    color: #667eea;
+    margin-right: 0.75rem;
+    font-size: 1.2rem;
+}
+
+.credential-item strong {
+    min-width: 100px;
+    color: #495057;
+}
+
+.credential-item code {
+    background: #e9ecef;
+    padding: 0.25rem 0.5rem;
+    border-radius: 3px;
+    color: #d63384;
+    font-size: 0.95rem;
+}
+
+.form-label {
+    font-weight: 500;
+    color: #495057;
+}
+
+.btn-login {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    padding: 0.75rem;
+    font-weight: 600;
+    transition: transform 0.2s;
+}
+
+.btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+

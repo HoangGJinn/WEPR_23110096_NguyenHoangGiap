@@ -1,0 +1,130 @@
+:root {
+    --header-height: 70px;
+    --sidebar-width: 220px;
+    --primary-color: #4e73df;
+    --sidebar-bg: #212529;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f3f4f6; /* Màu nền xám nhẹ hiện đại */
+    padding-top: var(--header-height); /* Đẩy nội dung xuống tránh bị Header che */
+}
+
+/* --- 1. FIXED HEADER STYLING --- */
+.navbar-top {
+    height: var(--header-height);
+    background-color: #ffffff;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    z-index: 1030; /* Luôn nằm trên Sidebar */
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    transition: all 0.3s;
+}
+
+.brand-logo {
+    width: var(--sidebar-width);
+    background-color: var(--sidebar-bg);
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-decoration: none;
+    border-right: 1px solid rgba(255,255,255,0.1);
+}
+
+.header-profile {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-right: 20px;
+    padding: 5px 15px;
+    border-radius: 30px;
+    transition: background 0.2s;
+}
+.header-profile:hover {
+    background-color: #f8f9fa;
+}
+.profile-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #e3e6f0;
+}
+
+/* --- 2. FIXED SIDEBAR STYLING --- */
+.sidebar-fixed {
+    position: fixed;
+    top: var(--header-height); /* Bắt đầu từ dưới Header */
+    bottom: 0;
+    left: 0;
+    z-index: 100;
+    width: var(--sidebar-width);
+    padding: 0;
+    overflow-x: hidden;
+    overflow-y: auto; /* Cho phép cuộn riêng Sidebar nếu menu dài */
+    background-color: var(--sidebar-bg);
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+}
+
+.sidebar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.7);
+    padding: 1rem 1.5rem;
+    font-weight: 500;
+    border-left: 4px solid transparent;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sidebar-nav .nav-link:hover {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.sidebar-nav .nav-link.active {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-left-color: var(--primary-color); /* Điểm nhấn active */
+}
+
+.sidebar-heading {
+    color: rgba(255,255,255,0.4);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 1.5rem 1.5rem 0.5rem;
+}
+
+/* --- 3. MAIN CONTENT STYLING --- */
+.main-wrapper {
+    margin-left: var(--sidebar-width); /* Chừa chỗ cho Sidebar */
+    padding: 2rem;
+    min-height: calc(100vh - var(--header-height) - 60px); /* Trừ header và footer */
+    transition: all 0.3s;
+}
+
+/* Card Style hiện đại cho nội dung */
+.card {
+    border: none;
+    border-radius: 0.75rem; /* Bo góc mềm mại */
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.05);
+}
+
+/* --- 4. FOOTER --- */
+.footer-admin {
+    margin-left: var(--sidebar-width);
+    background-color: #fff;
+    padding: 1.5rem 2rem;
+    border-top: 1px solid #e3e6f0;
+    color: #858796;
+    font-size: 0.9rem;
+}
+

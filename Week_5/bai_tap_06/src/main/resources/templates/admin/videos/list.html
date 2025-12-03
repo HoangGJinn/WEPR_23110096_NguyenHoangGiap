@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>Quản lý Video</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="bi bi-play-circle"></i> Quản lý Video</h2>
+            <a th:href="@{/admin/videos/create}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Thêm Video mới
+            </a>
+        </div>
+
+        <!-- Search Form -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form th:action="@{/admin/videos}" method="get" class="d-flex gap-2">
+                    <input type="text" 
+                           name="search" 
+                           class="form-control" 
+                           th:value="${search}"
+                           placeholder="Tìm kiếm theo tiêu đề hoặc mô tả...">
+                    <button type="submit" class="btn btn-outline-primary">
+                        <i class="bi bi-search"></i> Tìm kiếm
+                    </button>
+                    <a th:href="@{/admin/videos}" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-circle"></i> Xóa bộ lọc
+                    </a>
+                </form>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Title</th>
+                                <th>Poster</th>
+                                <th>Views</th>
+                                <th>Category</th>
+                                <th>Active</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="video : ${videos}">
+                                <td th:text="${video.id}"></td>
+                                <td th:text="${video.title}"></td>
+                                <td>
+                                    <img th:if="${video.poster}" th:src="${video.poster}" 
+                                         style="max-width: 200px; max-height: 200px;" class="img-thumbnail">
+                                    <span th:unless="${video.poster}" class="text-muted">Không có</span>
+                                </td>
+                                <td th:text="${video.views}"></td>
+                                <td th:text="${video.category?.categoryName ?: 'N/A'}"></td>
+                                <td>
+                                    <span th:if="${video.active}" class="badge bg-success">Active</span>
+                                    <span th:unless="${video.active}" class="badge bg-danger">Inactive</span>
+                                </td>
+                                <td>
+                                    <a th:href="@{/admin/videos/edit/{id}(id=${video.id})}" class="btn btn-sm btn-warning">
+                                        <i class="bi bi-pencil"></i> Sửa
+                                    </a>
+                                    <a th:href="@{/admin/videos/delete/{id}(id=${video.id})}" 
+                                       class="btn btn-sm btn-danger"
+                                       onclick="return confirm('Bạn có chắc chắn muốn xóa video này?')">
+                                        <i class="bi bi-trash"></i> Xóa
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(videos)}">
+                                <td colspan="7" class="text-center text-muted">Không có video nào</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
