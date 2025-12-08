@@ -1,0 +1,175 @@
+<!-- User Modal -->
+<div class="modal fade" id="userModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="userModalTitle">Thêm User mới</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="userForm">
+                    <input type="hidden" id="userId">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Username <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="userUsername" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Password <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" id="userPassword" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Fullname</label>
+                            <input type="text" class="form-control" id="userFullname">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" id="userEmail">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Phone</label>
+                            <input type="text" class="form-control" id="userPhone">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Images URL</label>
+                            <input type="text" class="form-control" id="userImages">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Admin</label>
+                            <select class="form-select" id="userAdmin">
+                                <option value="false">Không</option>
+                                <option value="true">Có</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Active</label>
+                            <select class="form-select" id="userActive">
+                                <option value="false">Inactive</option>
+                                <option value="true">Active</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2 justify-content-end">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn-primary">Lưu</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Category Modal -->
+<div class="modal fade" id="categoryModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="categoryModalTitle">Thêm Category mới</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="categoryForm">
+                    <input type="hidden" id="categoryId">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Category Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="categoryName" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Category Code <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="categoryCode" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Images URL</label>
+                            <input type="text" class="form-control" id="categoryImages">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">User</label>
+                            <select class="form-select" id="categoryUserId">
+                                <option value="">-- Chọn User --</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" id="categoryStatus">
+                                <option value="false">Inactive</option>
+                                <option value="true">Active</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2 justify-content-end">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn-primary">Lưu</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Video Modal -->
+<div class="modal fade" id="videoModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="videoModalTitle">Thêm Video mới</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="videoForm">
+                    <input type="hidden" id="videoId">
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label class="form-label">Title <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="videoTitle" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Poster URL</label>
+                            <input type="text" class="form-control" id="videoPoster">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Views</label>
+                            <input type="number" class="form-control" id="videoViews" value="0">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Category <span class="text-danger">*</span></label>
+                            <select class="form-select" id="videoCategoryId" required>
+                                <option value="">-- Chọn Category --</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Active</label>
+                            <select class="form-select" id="videoActive">
+                                <option value="false">Inactive</option>
+                                <option value="true">Active</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" id="videoDescription" rows="4"></textarea>
+                    </div>
+                    <div class="d-flex gap-2 justify-content-end">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn-primary">Lưu</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+

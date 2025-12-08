@@ -1,0 +1,42 @@
+<!-- Categories Page -->
+<div id="categories-page" class="page-content">
+    <div class="data-table">
+        <div class="table-header">
+            <h5><i class="bi bi-tags"></i> Quản lý Categories</h5>
+            <button class="btn btn-primary" onclick="openCategoryModal()">
+                <i class="bi bi-plus-circle"></i> Thêm Category
+            </button>
+        </div>
+        <div class="search-bar">
+            <input type="text" id="categorySearch" class="form-control" placeholder="Tìm kiếm categories...">
+            <button class="btn btn-outline-primary" onclick="searchCategories()">
+                <i class="bi bi-search"></i> Tìm kiếm
+            </button>
+        </div>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Category Name</th>
+                        <th>Category Code</th>
+                        <th>Image</th>
+                        <th>User</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="categoriesTableBody">
+                    <tr>
+                        <td colspan="7" class="text-center">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

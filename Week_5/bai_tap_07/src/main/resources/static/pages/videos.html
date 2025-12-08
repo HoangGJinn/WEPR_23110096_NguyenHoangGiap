@@ -1,0 +1,42 @@
+<!-- Videos Page -->
+<div id="videos-page" class="page-content">
+    <div class="data-table">
+        <div class="table-header">
+            <h5><i class="bi bi-play-circle"></i> Quản lý Videos</h5>
+            <button class="btn btn-primary" onclick="openVideoModal()">
+                <i class="bi bi-plus-circle"></i> Thêm Video
+            </button>
+        </div>
+        <div class="search-bar">
+            <input type="text" id="videoSearch" class="form-control" placeholder="Tìm kiếm videos...">
+            <button class="btn btn-outline-primary" onclick="searchVideos()">
+                <i class="bi bi-search"></i> Tìm kiếm
+            </button>
+        </div>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Poster</th>
+                        <th>Views</th>
+                        <th>Category</th>
+                        <th>Active</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="videosTableBody">
+                    <tr>
+                        <td colspan="7" class="text-center">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

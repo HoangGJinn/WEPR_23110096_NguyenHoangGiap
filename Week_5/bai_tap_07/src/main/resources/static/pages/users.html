@@ -1,0 +1,43 @@
+<!-- Users Page -->
+<div id="users-page" class="page-content">
+    <div class="data-table">
+        <div class="table-header">
+            <h5><i class="bi bi-people"></i> Quản lý Users</h5>
+            <button class="btn btn-primary" onclick="openUserModal()">
+                <i class="bi bi-plus-circle"></i> Thêm User
+            </button>
+        </div>
+        <div class="search-bar">
+            <input type="text" id="userSearch" class="form-control" placeholder="Tìm kiếm users...">
+            <button class="btn btn-outline-primary" onclick="searchUsers()">
+                <i class="bi bi-search"></i> Tìm kiếm
+            </button>
+        </div>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Fullname</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Admin</th>
+                        <th>Active</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody">
+                    <tr>
+                        <td colspan="8" class="text-center">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
