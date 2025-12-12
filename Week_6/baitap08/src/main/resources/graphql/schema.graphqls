@@ -1,0 +1,61 @@
+type Category {
+    id: ID!
+    name: String!
+    images: String
+    users: [User!]!
+}
+
+type User {
+    id: ID!
+    fullname: String!
+    email: String!
+    password: String!
+    phone: String
+    categories: [Category!]!
+}
+
+type Product {
+    id: ID!
+    title: String!
+    quantity: Int!
+    desc: String
+    price: Float!
+    userid: ID!
+    user: User
+}
+
+type Query {
+    # Category queries
+    getAllCategories: [Category!]!
+    getCategoryById(id: ID!): Category
+    
+    # User queries
+    getAllUsers: [User!]!
+    getUserById(id: ID!): User
+    
+    # Product queries
+    getAllProducts: [Product!]!
+    getProductsSortedByPrice: [Product!]!
+    getProductById(id: ID!): Product
+    getProductsByCategoryId(categoryId: ID!): [Product!]!
+}
+
+type Mutation {
+    # Category mutations
+    createCategory(name: String!, images: String): Category!
+    updateCategory(id: ID!, name: String, images: String): Category!
+    deleteCategory(id: ID!): Boolean!
+    
+    # User mutations
+    createUser(fullname: String!, email: String!, password: String!, phone: String): User!
+    updateUser(id: ID!, fullname: String, email: String, password: String, phone: String): User!
+    deleteUser(id: ID!): Boolean!
+    addCategoryToUser(userId: ID!, categoryId: ID!): User!
+    removeCategoryFromUser(userId: ID!, categoryId: ID!): User!
+    
+    # Product mutations
+    createProduct(title: String!, quantity: Int!, desc: String, price: Float!, userid: ID!): Product!
+    updateProduct(id: ID!, title: String, quantity: Int, desc: String, price: Float, userid: ID): Product!
+    deleteProduct(id: ID!): Boolean!
+}
+
