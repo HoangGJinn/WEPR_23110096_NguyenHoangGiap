@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Người dùng</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .main-content {
+            flex: 1;
+        }
+        .card {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <div class="main-content">
+        <div class="container mt-4">
+        <!-- Form thêm/sửa user -->
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 id="formTitle">Thêm người dùng mới</h5>
+            </div>
+            <div class="card-body">
+                <form id="userForm">
+                    <input type="hidden" id="userId">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Họ tên</label>
+                            <input type="text" class="form-control" id="fullname" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Mật khẩu</label>
+                            <input type="password" class="form-control" id="password" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Số điện thoại</label>
+                            <input type="text" class="form-control" id="phone">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-success">Lưu</button>
+                    <button type="button" class="btn btn-secondary" onclick="resetForm()">Hủy</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Quản lý categories cho user -->
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5>Thêm/Xóa Category cho User</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <input type="number" class="form-control" id="userIdForCategory" placeholder="User ID">
+                    </div>
+                    <div class="col-md-4">
+                        <input type="number" class="form-control" id="categoryIdForUser" placeholder="Category ID">
+                    </div>
+                    <div class="col-md-4">
+                        <button class="btn btn-info" onclick="addCategoryToUser()">Thêm Category</button>
+                        <button class="btn btn-warning" onclick="removeCategoryFromUser()">Xóa Category</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Danh sách users -->
+        <div class="card">
+            <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                <h5>Danh sách người dùng</h5>
+                <button class="btn btn-light btn-sm" onclick="loadUsers()">Làm mới</button>
+            </div>
+            <div class="card-body">
+                <div id="usersList"></div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <script>
+        const GRAPHQL_URL = '/graphql';
+
+        async function graphqlRequest(query, variables = {}) {
+            const response = await fetch(GRAPHQL_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    query: query,
+                    variables: variables
+                })
+            });
+            return await response.json();
+        }
+
+        async function loadUsers() {
+            const query = `
+                query {
+                    getAllUsers {
+                        id
+                        fullname
+                        email
+                        password
+                        phone
+                        categories {
+                            id
+                            name
+                        }
+                    }
+                }
+            `;
+            
+            const result = await graphqlRequest(query);
+            if (result.errors) {
+                alert('Lỗi: ' + result.errors[0].message);
+                return;
+            }
+            
+            const users = result.data.getAllUsers;
+            displayUsers(users);
+        }
+
+        function displayUsers(users) {
+            const container = document.getElementById('usersList');
+            if (users.length === 0) {
+                container.innerHTML = '<p class="text-muted">Không có người dùng nào.</p>';
+                return;
+            }
+            
+            let html = '<table class="table table-striped"><thead><tr><th>ID</th><th>Họ tên</th><th>Email</th><th>Số điện thoại</th><th>Categories</th><th>Thao tác</th></tr></thead><tbody>';
+            users.forEach(user => {
+                const categories = user.categories.map(c => c.name).join(', ') || 'Không có';
+                html += `
+                    <tr>
+                        <td>${user.id}</td>
+                        <td>${user.fullname}</td>
+                        <td>${user.email}</td>
+                        <td>${user.phone || ''}</td>
+                        <td>${categories}</td>
+                        <td>
+                            <button class="btn btn-sm btn-warning" onclick="editUser(${user.id})">Sửa</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteUser(${user.id})">Xóa</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        document.getElementById('userForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('userId').value;
+            const fullname = document.getElementById('fullname').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const phone = document.getElementById('phone').value;
+
+            let query, variables;
+            if (id) {
+                query = `
+                    mutation($id: ID!, $fullname: String, $email: String, $password: String, $phone: String) {
+                        updateUser(id: $id, fullname: $fullname, email: $email, password: $password, phone: $phone) {
+                            id
+                            fullname
+                        }
+                    }
+                `;
+                variables = { id: parseInt(id), fullname, email, password, phone };
+            } else {
+                query = `
+                    mutation($fullname: String!, $email: String!, $password: String!, $phone: String) {
+                        createUser(fullname: $fullname, email: $email, password: $password, phone: $phone) {
+                            id
+                            fullname
+                        }
+                    }
+                `;
+                variables = { fullname, email, password, phone };
+            }
+
+            const result = await graphqlRequest(query, variables);
+            if (result.errors) {
+                alert('Lỗi: ' + result.errors[0].message);
+                return;
+            }
+            
+            alert('Thành công!');
+            resetForm();
+            loadUsers();
+        });
+
+        async function editUser(id) {
+            const query = `
+                query($id: ID!) {
+                    getUserById(id: $id) {
+                        id
+                        fullname
+                        email
+                        password
+                        phone
+                    }
+                }
+            `;
+            
+            const result = await graphqlRequest(query, { id });
+            if (result.errors) {
+                alert('Lỗi: ' + result.errors[0].message);
+                return;
+            }
+            
+            const user = result.data.getUserById;
+            document.getElementById('userId').value = user.id;
+            document.getElementById('fullname').value = user.fullname;
+            document.getElementById('email').value = user.email;
+            document.getElementById('password').value = user.password;
+            document.getElementById('phone').value = user.phone || '';
+            document.getElementById('formTitle').textContent = 'Sửa người dùng';
+            window.scrollTo(0, 0);
+        }
+
+        async function deleteUser(id) {
+            if (!confirm('Bạn có chắc chắn muốn xóa người dùng này?')) return;
+            
+            const query = `
+                mutation($id: ID!) {
+                    deleteUser(id: $id)
+                }
+            `;
+            
+            const result = await graphqlRequest(query, { id });
+            if (result.errors) {
+                alert('Lỗi: ' + result.errors[0].message);
+                return;
+            }
+            
+            alert('Xóa thành công!');
+            loadUsers();
+        }
+
+        async function addCategoryToUser() {
+            const userId = document.getElementById('userIdForCategory').value;
+            const categoryId = document.getElementById('categoryIdForUser').value;
+            
+            if (!userId || !categoryId) {
+                alert('Vui lòng nhập đầy đủ User ID và Category ID');
+                return;
+            }
+            
+            const query = `
+                mutation($userId: ID!, $categoryId: ID!) {
+                    addCategoryToUser(userId: $userId, categoryId: $categoryId) {
+                        id
+                        fullname
+                    }
+                }
+            `;
+            
+            const result = await graphqlRequest(query, { userId: parseInt(userId), categoryId: parseInt(categoryId) });
+            if (result.errors) {
+                alert('Lỗi: ' + result.errors[0].message);
+                return;
+            }
+            
+            alert('Thêm thành công!');
+            loadUsers();
+        }
+
+        async function removeCategoryFromUser() {
+            const userId = document.getElementById('userIdForCategory').value;
+            const categoryId = document.getElementById('categoryIdForUser').value;
+            
+            if (!userId || !categoryId) {
+                alert('Vui lòng nhập đầy đủ User ID và Category ID');
+                return;
+            }
+            
+            const query = `
+                mutation($userId: ID!, $categoryId: ID!) {
+                    removeCategoryFromUser(userId: $userId, categoryId: $categoryId) {
+                        id
+                        fullname
+                    }
+                }
+            `;
+            
+            const result = await graphqlRequest(query, { userId: parseInt(userId), categoryId: parseInt(categoryId) });
+            if (result.errors) {
+                alert('Lỗi: ' + result.errors[0].message);
+                return;
+            }
+            
+            alert('Xóa thành công!');
+            loadUsers();
+        }
+
+        function resetForm() {
+            document.getElementById('userForm').reset();
+            document.getElementById('userId').value = '';
+            document.getElementById('formTitle').textContent = 'Thêm người dùng mới';
+        }
+
+        // Load users on page load
+        loadUsers();
+    </script>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

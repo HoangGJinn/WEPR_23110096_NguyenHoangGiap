@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Danh mục</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .main-content {
+            flex: 1;
+        }
+        .card {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <div class="main-content">
+        <div class="container mt-4">
+        <!-- Form thêm/sửa category -->
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 id="formTitle">Thêm danh mục mới</h5>
+            </div>
+            <div class="card-body">
+                <form id="categoryForm" novalidate>
+                    <input type="hidden" id="categoryId">
+                    <div class="mb-3">
+                        <label class="form-label">Tên danh mục <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="name" required minlength="2" maxlength="100">
+                        <div class="invalid-feedback">Tên danh mục phải từ 2 đến 100 ký tự.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">URL Hình ảnh</label>
+                        <input type="url" class="form-control" id="images" placeholder="https://example.com/image.jpg">
+                        <div class="invalid-feedback">URL hình ảnh không hợp lệ.</div>
+                        <small class="text-muted">Nhập URL hình ảnh (tùy chọn)</small>
+                    </div>
+                    <button type="submit" class="btn btn-info">
+                        <i class="bi bi-save"></i> Lưu
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                        <i class="bi bi-x-circle"></i> Hủy
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Danh sách categories -->
+        <div class="card">
+            <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                <h5>Danh sách danh mục</h5>
+                <button class="btn btn-light btn-sm" onclick="loadCategories()">Làm mới</button>
+            </div>
+            <div class="card-body">
+                <div id="categoriesList"></div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <script>
+        const GRAPHQL_URL = '/graphql';
+
+        async function graphqlRequest(query, variables = {}) {
+            const response = await fetch(GRAPHQL_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    query: query,
+                    variables: variables
+                })
+            });
+            return await response.json();
+        }
+
+        async function loadCategories() {
+            const query = `
+                query {
+                    getAllCategories {
+                        id
+                        name
+                        images
+                        users {
+                            id
+                            fullname
+                        }
+                    }
+                }
+            `;
+            
+            const result = await graphqlRequest(query);
+            if (result.errors) {
+                alert('Lỗi: ' + result.errors[0].message);
+                return;
+            }
+            
+            const categories = result.data.getAllCategories;
+            displayCategories(categories);
+        }
+
+        function displayCategories(categories) {
+            const container = document.getElementById('categoriesList');
+            if (categories.length === 0) {
+                container.innerHTML = '<p class="text-muted">Không có danh mục nào.</p>';
+                return;
+            }
+            
+            let html = '<table class="table table-striped"><thead><tr><th>ID</th><th>Tên</th><th>Hình ảnh</th><th>Users</th><th>Thao tác</th></tr></thead><tbody>';
+            categories.forEach(category => {
+                const users = category.users.map(u => u.fullname).join(', ') || 'Không có';
+                html += `
+                    <tr>
+                        <td>${category.id}</td>
+                        <td>${category.name}</td>
+                        <td>${category.images || ''}</td>
+                        <td>${users}</td>
+                        <td>
+                            <button class="btn btn-sm btn-warning" onclick="editCategory(${category.id})">Sửa</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteCategory(${category.id})">Xóa</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        document.getElementById('categoryForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Validate form
+            const form = e.target;
+            if (!form.checkValidity()) {
+                e.stopPropagation();
+                form.classList.add('was-validated');
+                return;
+            }
+            
+            const id = document.getElementById('categoryId').value;
+            const name = document.getElementById('name').value.trim();
+            const images = document.getElementById('images').value.trim();
+
+            // Additional validation
+            if (name.length < 2 || name.length > 100) {
+                alert('Tên danh mục phải từ 2 đến 100 ký tự!');
+                return;
+            }
+
+            let query, variables;
+            if (id) {
+                query = `
+                    mutation($id: ID!, $name: String, $images: String) {
+                        updateCategory(id: $id, name: $name, images: $images) {
+                            id
+                            name
+                        }
+                    }
+                `;
+                variables = { id: parseInt(id), name, images };
+            } else {
+                query = `
+                    mutation($name: String!, $images: String) {
+                        createCategory(name: $name, images: $images) {
+                            id
+                            name
+                        }
+                    }
+                `;
+                variables = { name, images };
+            }
+
+            const result = await graphqlRequest(query, variables);
+            if (result.errors) {
+                alert('Lỗi: ' + result.errors[0].message);
+                return;
+            }
+            
+            alert('Lưu danh mục thành công!');
+            resetForm();
+            loadCategories();
+        });
+
+        async function editCategory(id) {
+            const query = `
+                query($id: ID!) {
+                    getCategoryById(id: $id) {
+                        id
+                        name
+                        images
+                    }
+                }
+            `;
+            
+            const result = await graphqlRequest(query, { id });
+            if (result.errors) {
+                alert('Lỗi: ' + result.errors[0].message);
+                return;
+            }
+            
+            const category = result.data.getCategoryById;
+            document.getElementById('categoryId').value = category.id;
+            document.getElementById('name').value = category.name;
+            document.getElementById('images').value = category.images || '';
+            document.getElementById('formTitle').textContent = 'Sửa danh mục';
+            window.scrollTo(0, 0);
+        }
+
+        async function deleteCategory(id) {
+            if (!confirm('Bạn có chắc chắn muốn xóa danh mục này?')) return;
+            
+            const query = `
+                mutation($id: ID!) {
+                    deleteCategory(id: $id)
+                }
+            `;
+            
+            const result = await graphqlRequest(query, { id });
+            if (result.errors) {
+                alert('Lỗi: ' + result.errors[0].message);
+                return;
+            }
+            
+            alert('Xóa thành công!');
+            loadCategories();
+        }
+
+        function resetForm() {
+            const form = document.getElementById('categoryForm');
+            form.reset();
+            form.classList.remove('was-validated');
+            document.getElementById('categoryId').value = '';
+            document.getElementById('formTitle').textContent = 'Thêm danh mục mới';
+        }
+
+        // Load categories on page load
+        loadCategories();
+    </script>
+    
+    <div th:replace="~{fragments/footer :: footer}"></div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+</body>
+</html>
