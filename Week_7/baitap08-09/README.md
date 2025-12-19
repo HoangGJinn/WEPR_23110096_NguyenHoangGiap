@@ -1,4 +1,4 @@
-# Bài tập 09 - Xây dựng từ bài tập 08, phát triển thêm validate cho các form login, register, tạo sản phẩm,..
+# Bài tập 10 - Xây dựng từ bài tập 08, 09 phát triển thêm JWT, validate form, phân quyền.
 # Phân quyền ADMIN và USER
 
 ## Thông tin sinh viên
@@ -8,7 +8,8 @@
 ## Mô tả bài tập
 
 Xây dựng hệ thống quản lý sản phẩm sử dụng GraphQL API và Thymeleaf với AJAX.
-validate các form, phân quyền ADMIN và USER. User chỉ có thể vào trang home không thể vào trang quản lý sản phẩm, category.
+Validate các form, phân quyền ADMIN và USER. User chỉ có thể vào trang home không thể vào trang quản lý sản phẩm, category.
+Thêm xác thực bằng JWT.
 
 ### Yêu cầu
 - Database gồm 3 bảng: **Category** (id, name, images), **User** (id, fullname, email, password, phone), **Product** (id, title, quantity, desc, price, userid)

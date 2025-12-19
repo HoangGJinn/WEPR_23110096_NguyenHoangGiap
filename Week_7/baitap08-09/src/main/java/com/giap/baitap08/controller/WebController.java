@@ -5,7 +5,10 @@ import com.giap.baitap08.dto.UserRegistrationDTO;
 import com.giap.baitap08.entity.User;
 import com.giap.baitap08.repository.ProductRepository;
 import com.giap.baitap08.service.UserService;
-import jakarta.servlet.http.HttpSession;
+import com.giap.baitap08.util.JwtUtil;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -22,6 +25,7 @@ public class WebController {
 
     private final UserService userService;
     private final ProductRepository productRepository;
+    private final JwtUtil jwtUtil;
 
     @ModelAttribute("avatarUrl")
     public String getAvatarUrl() {
@@ -29,9 +33,35 @@ public class WebController {
     }
 
     @ModelAttribute("userName")
-    public String getUserName(HttpSession session) {
-        User user = (User) session.getAttribute("loggedInUser");
-        return user != null ? user.getFullname() : "Guest";
+    public String getUserName(HttpServletRequest request) {
+        String token = getTokenFromRequest(request);
+        if (token != null && jwtUtil.validateToken(token)) {
+            try {
+                String fullname = jwtUtil.extractFullname(token);
+                return fullname != null ? fullname : "Guest";
+            } catch (Exception e) {
+                return "Guest";
+            }
+        }
+        return "Guest";
+    }
+
+    private String getTokenFromRequest(HttpServletRequest request) {
+        // Try to get token from cookie first
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("jwtToken".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        // Try to get token from Authorization header
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7);
+        }
+        return null;
     }
 
     @GetMapping("/")
@@ -89,7 +119,7 @@ public class WebController {
     @PostMapping("/login")
     public String loginUser(@Valid @ModelAttribute UserLoginDTO userLoginDTO,
                           BindingResult bindingResult,
-                          HttpSession session,
+                          HttpServletResponse response,
                           RedirectAttributes redirectAttributes,
                           Model model) {
         if (bindingResult.hasErrors()) {
@@ -98,7 +128,17 @@ public class WebController {
 
         try {
             User user = userService.loginUser(userLoginDTO);
-            session.setAttribute("loggedInUser", user);
+            // Generate JWT token
+            String token = jwtUtil.generateToken(user);
+            
+            // Set token as HTTP-only cookie
+            Cookie cookie = new Cookie("jwtToken", token);
+            cookie.setHttpOnly(true);
+            cookie.setPath("/");
+            cookie.setMaxAge((int) (jwtUtil.getExpiration() / 1000)); // Convert milliseconds to seconds
+            cookie.setSecure(false); // Set to true in production with HTTPS
+            response.addCookie(cookie);
+            
             redirectAttributes.addFlashAttribute("successMessage", "Đăng nhập thành công!");
             return "redirect:/";
         } catch (Exception e) {
@@ -108,8 +148,14 @@ public class WebController {
     }
 
     @GetMapping("/logout")
-    public String logout(HttpSession session, RedirectAttributes redirectAttributes) {
-        session.invalidate();
+    public String logout(HttpServletResponse response, RedirectAttributes redirectAttributes) {
+        // Remove JWT token cookie
+        Cookie cookie = new Cookie("jwtToken", null);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+        
         redirectAttributes.addFlashAttribute("successMessage", "Đăng xuất thành công!");
         return "redirect:/login";
     }
